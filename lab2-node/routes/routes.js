@@ -2,19 +2,25 @@ const http = require("http");
 const fs = require("fs");
 const crud = require("../controllers/crud");
 const { readingTemplates } = require("./../scripts/readingTemplates");
+const { replaceTemplate } = require("./../scripts/replaceTemplate");
 
 function routing(url, res) {
   //home
   if (url === "/") {
-    const home = readingTemplates().tempHome;
-
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(home);
+
+    const home = readingTemplates().tempHome;
+    const employees = crud.listEmployees();
+    const replacedTemplate = employees
+      .map((employee) => replaceTemplate(home, employee))
+      .join("");
+
+    res.end(replacedTemplate);
   }
   //astronomy
   else if (url === "/astronomy") {
     const astronomy = readingTemplates().tempAstro;
-
+    const replacedTemplate = replaceTemplate(astronomy, crud.readAll());
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(astronomy);
   }

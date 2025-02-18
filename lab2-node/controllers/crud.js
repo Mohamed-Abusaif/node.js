@@ -40,9 +40,11 @@ const listEmployees = (id) => {
         )
       : console.log("Employee not found!");
   }
-  employees.forEach(({ name, email, salary }) =>
-    console.log(`Name: ${name}, Email: ${email}, Salary: ${salary}`)
+  employees.forEach((e) =>
+    console.log(`Name: ${e.name}, Email: ${e.email}, Salary: ${e.salary}`)
   );
+  console.log(employees);
+  return employees;
 };
 
 const editEmployee = (id, args) => {
