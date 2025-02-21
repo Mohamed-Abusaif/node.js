@@ -7,6 +7,8 @@ const crud = require("../controllers/crud");
 const { readingTemplates } = require("./../scripts/readingTemplates");
 const { replaceTemplate } = require("./../scripts/replaceTemplate");
 const { injectImage } = require("./../scripts/injectImage");
+
+
 const employeeCardTemplate = `
   <div class="employee">
     <h2>{%EMPLOYEE_NAME%}</h2>
@@ -20,12 +22,15 @@ const employeeCardTemplate = `
 const astroImage = "../public/astro.jpg";
 const serbalImage = "../public/serbal.jpeg";
 
-function routing(req, res) {
+async function routing(req, res) {
   //home
   if (req.url === "/") {
     res.writeHead(200, { "Content-Type": "text/html" });
     const home = readingTemplates().tempHome;
-    const employees = crud.listEmployees();
+    let employees = await crud.listEmployees();
+    if (!Array.isArray(employees)) {
+      employees = [];
+    }
     const employeesHTML = employees
       .map((employee) => replaceTemplate(employeeCardTemplate, employee))
       .join("");
@@ -52,24 +57,7 @@ function routing(req, res) {
     const addEmployee = readingTemplates().tempAddEmployee;
     res.end(addEmployee);
   } else if (req.url === "/employee" && req.method === "POST") {
-    // Collect form data
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk.toString();
-    });
-
-    // When all data is received
-    req.on("end", () => {
-      // Parse the form data
-      const parsedData = parse(body);
-
-      // Call addEmployee with the parsed data
-      crud.addEmployee(parsedData);
-
-      // Send a response back to the client
-      res.writeHead(302, { Location: "/" }); // Redirect to home after adding employee
-      res.end();
-    });
+    
   } else if (req.url === "/astronomy/download") {
     const imagePath = path.join(__dirname, "../public/astro.jpg");
 

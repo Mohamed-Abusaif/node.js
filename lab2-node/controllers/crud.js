@@ -1,5 +1,7 @@
 const { getEmployees, saveEmployees } = require("../scripts/fileInput");
 const { validateEmployeeData } = require("../scripts/validation");
+const fs = require("fs");
+const path = require("path");
 
 const parseArgs = (args) =>
   Object.fromEntries(
@@ -12,67 +14,73 @@ const getPage = (res, page) => {
   res.end;
 };
 
-const addEmployee = (args) => {
-  const employees = getEmployees();
-  const newEmployee = {
-    ...parseArgs(args),
-    Id: (employees.at(-1)?.Id || 0) + 1,
-    Level: "Jr",
-  };
-  newEmployee.yearsOfExperience = Number(newEmployee.yearsOfExperience) || 0;
-  newEmployee.salary = Number(newEmployee.salary);
+const addEmployee = async (req, res) => {
+  try {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
 
-  const errorMsg = validateEmployeeData(newEmployee);
-  if (errorMsg) return console.log(errorMsg);
+    req.on("end", async () => {
+      const formData = new URLSearchParams(body);
+      const employees = await getEmployees();
+      console.log("Employees:", employees);
+      const newEmployee = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        salary: Number(formData.get("salary")),
+        yearsOfExperience: Number(formData.get("yearsOfExperience")) || 0,
+        Id: (employees.at(-1)?.Id || 0) + 1,
+        Level: "Jr",
+      };
+      console.log("New Employee:", newEmployee);
 
-  employees.push(newEmployee);
-  saveEmployees(employees);
-  console.log("Employee added successfully!");
-};
+      const errorMsg = validateEmployeeData(newEmployee);
+      if (errorMsg) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        return res.end(errorMsg);
+      }
 
-const listEmployees = (id) => {
-  const employees = getEmployees();
-  if (id) {
-    const employee = employees.find((e) => e.Id == id);
-    return employee
-      ? console.log(
-          `Name: ${employee.name}, Email: ${employee.email}, Salary: ${employee.salary}`
-        )
-      : console.log("Employee not found!");
+      employees.push(newEmployee);
+      await saveEmployees(employees);
+
+      // Save to data.json
+      const dataPath = path.join(__dirname, "../data/data.json");
+      fs.writeFileSync(dataPath, JSON.stringify(employees, null, 2));
+      console.log("Employee added successfully!");
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end("Employee added successfully!");
+    });
+  } catch (error) {
+    console.error("Error adding employee:", error);
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end("Internal Server Error");
   }
-  employees.forEach((e) =>
-    console.log(`Name: ${e.name}, Email: ${e.email}, Salary: ${e.salary}`)
-  );
-  return employees;
 };
 
-const editEmployee = (id, args) => {
-  const employees = getEmployees();
-  const employee = employees.find((e) => e.Id == id);
-  if (!employee) return console.log("Employee not found!");
-
-  Object.assign(employee, parseArgs(args));
-  employee.salary = Number(employee.salary);
-  employee.yearsOfExperience = Number(employee.yearsOfExperience) || 0;
-
-  saveEmployees(employees);
-  console.log("Employee updated successfully!");
-};
-
-const deleteEmployee = (id) => {
-  let employees = getEmployees();
-  const index = employees.findIndex((e) => e.Id == id);
-  if (index === -1) return console.log("Employee not found!");
-
-  employees.splice(index, 1);
-  saveEmployees(employees);
-  console.log("Employee deleted successfully!");
+const listEmployees = async (id) => {
+  try {
+    const employees = await getEmployees();
+    if (id) {
+      const employee = employees.find((e) => e.Id == id);
+      return employee
+        ? console.log(
+            `Name: ${employee.name}, Email: ${employee.email}, Salary: ${employee.salary}`
+          )
+        : console.log("Employee not found!");
+    }
+    employees.forEach((e) =>
+      console.log(`Name: ${e.name}, Email: ${e.email}, Salary: ${e.salary}`)
+    );
+    return employees;
+  } catch (error) {
+    console.error("Error listing employees:", error);
+    return [];
+  }
 };
 
 module.exports = {
   addEmployee,
   listEmployees,
-  editEmployee,
-  deleteEmployee,
   getPage,
 };
