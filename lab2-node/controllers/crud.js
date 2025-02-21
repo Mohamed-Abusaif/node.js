@@ -1,5 +1,6 @@
 const { getEmployees, saveEmployees } = require("../scripts/fileInput");
 const { validateEmployeeData } = require("../scripts/validation");
+const querystring = require("querystring");
 const fs = require("fs");
 const path = require("path");
 
@@ -22,18 +23,16 @@ const addEmployee = async (req, res) => {
     });
 
     req.on("end", async () => {
-      const formData = new URLSearchParams(body);
+      const formData = querystring.parse(body);
       const employees = await getEmployees();
-      console.log("Employees:", employees);
       const newEmployee = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        salary: Number(formData.get("salary")),
-        yearsOfExperience: Number(formData.get("yearsOfExperience")) || 0,
+        name: formData.name,
+        email: formData.email,
+        salary: Number(formData.salary),
+        yearsOfExperience: Number(formData.yearsOfExperience) || 0,
         Id: (employees.at(-1)?.Id || 0) + 1,
         Level: "Jr",
       };
-      console.log("New Employee:", newEmployee);
 
       const errorMsg = validateEmployeeData(newEmployee);
       if (errorMsg) {
@@ -44,10 +43,6 @@ const addEmployee = async (req, res) => {
       employees.push(newEmployee);
       await saveEmployees(employees);
 
-      // Save to data.json
-      const dataPath = path.join(__dirname, "../data/data.json");
-      fs.writeFileSync(dataPath, JSON.stringify(employees, null, 2));
-      console.log("Employee added successfully!");
       res.writeHead(200, { "Content-Type": "text/plain" });
       res.end("Employee added successfully!");
     });

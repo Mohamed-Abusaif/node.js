@@ -8,7 +8,6 @@ const { readingTemplates } = require("./../scripts/readingTemplates");
 const { replaceTemplate } = require("./../scripts/replaceTemplate");
 const { injectImage } = require("./../scripts/injectImage");
 
-
 const employeeCardTemplate = `
   <div class="employee">
     <h2>{%EMPLOYEE_NAME%}</h2>
@@ -55,9 +54,10 @@ async function routing(req, res) {
   //add employee
   else if (req.url === "/addEmployee") {
     const addEmployee = readingTemplates().tempAddEmployee;
+    res.writeHead(200, { "Content-Type": "text/html" });
     res.end(addEmployee);
   } else if (req.url === "/employee" && req.method === "POST") {
-    
+    await crud.addEmployee(req, res);
   } else if (req.url === "/astronomy/download") {
     const imagePath = path.join(__dirname, "../public/astro.jpg");
 
