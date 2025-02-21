@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Employee</title>
+  </head>
+  <body>
+    <h2>Add Employee</h2>
+    <form action="/employee" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="salary">Salary:</label>
+      <input type="number" id="salary" name="salary" required />
+
+      <label for="Id">ID:</label>
+      <input type="number" id="Id" name="Id" required />
+
+      <label for="Level">Level:</label>
+      <select id="Level" name="Level">
+        <option value="Jr">Jr</option>
+        <option value="Mid">Mid</option>
+        <option value="Sr">Sr</option>
+      </select>
+
+      <label for="yearsOfExperience">Years of Experience:</label>
+      <input
+        type="number"
+        id="yearsOfExperience"
+        name="yearsOfExperience"
+        min="0"
+        required
+      />
+
+      <button type="submit">Add Employee</button>
+    </form>
+  </body>
+</html>

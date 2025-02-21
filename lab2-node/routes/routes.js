@@ -1,9 +1,12 @@
 const http = require("http");
 const fs = require("fs");
+const path = require("path");
+const { parse } = require("querystring");
+
 const crud = require("../controllers/crud");
 const { readingTemplates } = require("./../scripts/readingTemplates");
 const { replaceTemplate } = require("./../scripts/replaceTemplate");
-
+const { injectImage } = require("./../scripts/injectImage");
 const employeeCardTemplate = `
   <div class="employee">
     <h2>{%EMPLOYEE_NAME%}</h2>
@@ -14,35 +17,105 @@ const employeeCardTemplate = `
     <p>Experience: {%YEARS_OF_EXPERIENCE%} years</p>
   </div>
 `;
-function routing(url, res) {
+const astroImage = "../public/astro.jpg";
+const serbalImage = "../public/serbal.jpeg";
+
+function routing(req, res) {
   //home
-  if (url === "/") {
+  if (req.url === "/") {
     res.writeHead(200, { "Content-Type": "text/html" });
     const home = readingTemplates().tempHome;
     const employees = crud.listEmployees();
-    console.log(employees)
-
-    const employeesHTML = employees.map((employee) => replaceTemplate(employeeCardTemplate, employee)).join("");
+    const employeesHTML = employees
+      .map((employee) => replaceTemplate(employeeCardTemplate, employee))
+      .join("");
     const finalHTML = home.replace("{%EMPLOYEE_CARDS%}", employeesHTML);
 
     res.end(finalHTML);
   }
   //astronomy
-  else if (url === "/astronomy") {
-    const astronomy = readingTemplates().tempAstro;
-    const replacedTemplate = replaceTemplate(astronomy, crud.readAll());
+  else if (req.url === "/astronomy") {
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(astronomy);
+    const astronomy = readingTemplates().tempAstro;
+    const astroWithImage = injectImage(astronomy, astroImage);
+    res.end(astroWithImage);
   }
   //serbal
-  else if (url === "/serbal") {
+  else if (req.url === "/serbal") {
+    res.writeHead(200, { "Content-Type": "text/html" });
     const serbal = readingTemplates().tempSerbal;
-    res.end(serbal);
+    const serbalWithImage = injectImage(serbal, serbalImage);
+    res.end(serbalWithImage);
   }
   //add employee
-  else if (url === "addEmployee") {
+  else if (req.url === "/addEmployee") {
     const addEmployee = readingTemplates().tempAddEmployee;
     res.end(addEmployee);
+  } else if (req.url === "/employee" && req.method === "POST") {
+    // Collect form data
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+
+    // When all data is received
+    req.on("end", () => {
+      // Parse the form data
+      const parsedData = parse(body);
+
+      // Call addEmployee with the parsed data
+      crud.addEmployee(parsedData);
+
+      // Send a response back to the client
+      res.writeHead(302, { Location: "/" }); // Redirect to home after adding employee
+      res.end();
+    });
+  } else if (req.url === "/astronomy/download") {
+    const imagePath = path.join(__dirname, "../public/astro.jpg");
+
+    fs.access(imagePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Image not found");
+        return;
+      }
+
+      res.writeHead(200, {
+        "Content-Type": "image/jpeg",
+        "Content-Disposition": "attachment; filename=astro.jpg",
+      });
+
+      const readStream = fs.createReadStream(imagePath);
+      readStream.pipe(res);
+    });
+  }
+  //static images
+  else if (req.url.startsWith("/public/astro")) {
+    console.log("---------------------------");
+    const imagePath = path.join(__dirname, "..", "public/astro.jpg");
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Image Not Found");
+      } else {
+        res.writeHead(200, { "Content-Type": "image/jpeg" });
+        res.end(data);
+      }
+    });
+  }
+  //static images
+  else if (req.url.startsWith("/public/serbal")) {
+    console.log("---------------------------");
+    const imagePath = path.join(__dirname, "..", "public/serbal.jpeg");
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Image Not Found");
+      } else {
+        res.writeHead(200, { "Content-Type": "image/jpeg" });
+        res.end(data);
+      }
+    });
   }
   //404
   else {

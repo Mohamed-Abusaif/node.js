@@ -3,7 +3,8 @@ const http = require("http");
 const { routing } = require("./routes/routes");
 
 const server = http.createServer((req, res) => {
-  routing(req.url, res);
+  console.log(req.url);
+  routing(req, res);
 });
 
 server.listen(5000, () => {

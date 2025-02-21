@@ -43,7 +43,6 @@ const listEmployees = (id) => {
   employees.forEach((e) =>
     console.log(`Name: ${e.name}, Email: ${e.email}, Salary: ${e.salary}`)
   );
-  console.log(employees);
   return employees;
 };
 
