@@ -1,6 +1,6 @@
 const { getEmployees, saveEmployees } = require("./utils/fileInput");
 const { validateEmployeeData } = require("./utils/validation");
-
+//add validation here before entering the function 
 const parseArgs = (args) =>
   Object.fromEntries(
     args.slice(1).map((arg) => arg.replace("--", "").split("="))
@@ -13,8 +13,8 @@ const addEmployee = (args) => {
     Id: (employees.at(-1)?.Id || 0) + 1,
     Level: "Jr",
   };
-  newEmployee.yearsOfExperience = Number(newEmployee.yearsOfExperience) || 0;
-  newEmployee.salary = Number(newEmployee.salary);
+  newEmployee.yearsOfExperience =newEmployee.yearsOfExperience || 0;
+  newEmployee.salary = newEmployee.salary;
 
   const errorMsg = validateEmployeeData(newEmployee);
   if (errorMsg) return console.log(errorMsg);
@@ -45,13 +45,13 @@ const editEmployee = (id, args) => {
   if (!employee) return console.log("Employee not found!");
 
   Object.assign(employee, parseArgs(args));
-  employee.salary = Number(employee.salary);
-  employee.yearsOfExperience = Number(employee.yearsOfExperience) || 0;
+  employee.salary = employee.salary;
+  employee.yearsOfExperience =employee.yearsOfExperience || 0;
 
   saveEmployees(employees);
   console.log("Employee updated successfully!");
 };
-
+//use filter instead of findendex and splice 
 const deleteEmployee = (id) => {
   let employees = getEmployees();
   const index = employees.findIndex((e) => e.Id == id);

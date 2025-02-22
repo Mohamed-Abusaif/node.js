@@ -1,4 +1,5 @@
 const validateEmployeeData = (data) => {
+  //naming convention should be onsistent 
   const { name, email, salary, Level, yearsOfExperience } = data;
 
   if (!name || typeof name !== "string") return "Invalid name!";

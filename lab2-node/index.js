@@ -8,6 +8,8 @@ const server = http.createServer((req, res) => {
   routing(req, res);
 });
 
+//configure linter auto format
+
 server.listen(5050, () => {
   console.log("server is listening on port 5050");
 });

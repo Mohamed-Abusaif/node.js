@@ -54,6 +54,7 @@ async function routing(req, res) {
   //add employee
   else if (req.url === "/addEmployee") {
     const addEmployee = readingTemplates().tempAddEmployee;
+    debugger;
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(addEmployee);
   } else if (req.url === "/employee" && req.method === "POST") {
@@ -92,7 +93,7 @@ async function routing(req, res) {
     });
   }
   //static images
-  else if (req.url.startsWith("/public/serbal")) {
+  else if (req.url.startsWith(`/public/serbal`)) {
     console.log("---------------------------");
     const imagePath = path.join(__dirname, "..", "public/serbal.jpeg");
     fs.readFile(imagePath, (err, data) => {

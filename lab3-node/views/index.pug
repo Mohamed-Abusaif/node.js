@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Employee List
+    link(rel="stylesheet", href="/stylesheets/style.css")
+  body
+    h1 Employee List
+    ul.employee-list
+      each employee in employees
+        li.employee-card
+          h2= employee.name
+          p Email: #{employee.email}
+          p Salary: $#{employee.salary}
+          p Level: #{employee.Level}
+          p Experience: #{employee.yearsOfExperience} years
+    img.Aswan-image(src="/images/balloon.webp", alt="Aswan Image")
