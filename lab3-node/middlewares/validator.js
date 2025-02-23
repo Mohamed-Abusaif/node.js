@@ -1,19 +1,32 @@
 const Ajv = require("ajv");
 const ajv = new Ajv();
 
-const schema = {
+const employeeSchema = {
   type: "object",
   properties: {
-    foo: { type: "integer" },
-    bar: { type: "string" },
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+    salary: { type: "number", minimum: 0 },
+    Id: { type: "integer", minimum: 1 },
+    Level: {
+      type: "string",
+      enum: ["Intern", "Jr", "Mid", "Sr", "Lead"],
+    },
+    yearsOfExperience: { type: "integer", minimum: 0 },
   },
-  required: ["foo"],
+  required: ["name", "email", "salary", "Id", "Level", "yearsOfExperience"],
   additionalProperties: false,
 };
 
-const validate = (req, res, next) => {
-  const valid = ajv.validate(schema, req.body);
-  if (!valid) console.log(ajv.errors);
+const validateEmp = (req, res, next) => {
+  const valid = ajv.validate(employeeSchema, req.body);
+  debugger;
+  if (!valid) {
+    res.status(400).json({ error: ajv.errors });
+  }
+  else{
+    next();
+  }
 };
 
-module.exports = { validate };
+module.exports = { validateEmp };
