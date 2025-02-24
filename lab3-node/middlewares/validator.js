@@ -20,7 +20,6 @@ const employeeSchema = {
 
 const validateEmp = (req, res, next) => {
   const valid = ajv.validate(employeeSchema, req.body);
-  debugger;
   if (!valid) {
     res.status(400).json({ error: ajv.errors });
   }

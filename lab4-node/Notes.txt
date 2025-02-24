@@ -1,0 +1,62 @@
+Use Debugger
+
+Employee can only change it to cancelled if it’s not ended  
+
+BONUS:
+empBukupId: (id of colleague who will cover work during the leave)
+Shouldn’t be the same as empId
+         
+ 
+Use autoIncremental id instead of mongo id
+
+=============================================
+
+Mongoose Schema Resources:
+---------------------------------------------
+https://www.npmjs.com/package/dotenv
+
+---------------------------------------------
+https://mongoosejs.com/docs/api/schema.html
+
+https://mongoosejs.com/docs/populate.html
+
+https://mongoosejs.com/docs/defaults.html
+
+https://www.npmjs.com/package/mongoose-id-autoincrement
+
+---------------------------------------------
+Regular expression for not allowing spaces in the input field:
+https://stackoverflow.com/questions/16334765/regular-expression-for-not-allowing-spaces-in-the-input-field
+
+---------------------------------------------
+add created_at and updated_at fields to mongoose schemas
+https://stackoverflow.com/questions/12669615/add-created-at-and-updated-at-fields-to-mongoose-schemas
+
+---------------------------------------------
+How can i capitalize strings in mongoose?
+https://stackoverflow.com/questions/28116533/how-can-i-capitalize-strings-in-mongoose
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase
+---------------------------------------------
+Prevent input from negative number Mongoose Schema
+https://stackoverflow.com/questions/52459686/prevent-input-from-negative-number-mongoose-schema
+---------------------------------------------
+Mastering Email Validation in Mongoose: Syntax, Uniqueness, and Beyond
+https://blog.bounceless.io/mastering-email-validation-in-mongoose-syntax-uniqueness-and-beyond/
+
+
+=============================================
+
+CORS (Cross-Origin Resource Sharing) is a security feature implemented by web browsers to restrict 
+web pages from making requests to a different domain than the one that served the web page.
+It helps prevent malicious websites from accessing sensitive information from another domain without permission.
+
+https://www.npmjs.com/package/cors
+
+When a browser makes a cross-origin request, it sends an additional HTTP request called a preflight request to check if the server allows the cross-origin request. The preflight request uses the OPTIONS method and includes the following headers:
+
+Origin: Specifies the origin (protocol, domain, and port) from which the request is initiated.
+Access-Control-Request-Method: Specifies the HTTP method (e.g., GET, POST, PUT) of the actual request.
+
+=============================================
+

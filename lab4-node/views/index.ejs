@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Leaves</title>
+</head>
+<body>
+    <h1>Employee Leaves</h1>
+
+    <form action="/" method="get">
+        <label for="empId">Employee ID:</label>
+        <input type="text" name="empId" id="empId" value="<%= empId %>" required>
+
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+            <option value="">All</option>
+            <option value="inprogress" <%= status === 'inprogress' ? 'selected' : '' %>>In Progress</option>
+            <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+            <option value="ended" <%= status === 'ended' ? 'selected' : '' %>>Ended</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <h2>Leaves List:</h2>
+    <ul>
+        <% leaves.forEach(leave => { %>
+            <li>
+                Type: <%= leave.type %>, Duration: <%= leave.duration %> days, 
+                Status: <%= leave.status %>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>
